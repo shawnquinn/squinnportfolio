@@ -1,0 +1,20 @@
+$primary-color: navy;
+$secondary-color: darkred;
+$tertiary-color: gold;
+
+$white: #fff;
+
+$font-header: Times, serif;
+$font-body: Helvetica, sans-serif;
+
+$font-size: 16px;
+
+body {
+	background-color: $white;
+	font-size: $font-size;
+	line-height: 1.6;
+	
+	p {
+		
+	}
+}
