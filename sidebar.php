@@ -2,16 +2,14 @@
 /**
  * The sidebar containing the main widget area.
  *
- * @package understrap
+ * @since   1.0.0
+ * @package Rolling
  */
+// Get all sidebars
+$sidebar = cs_get_option( 'blog-sidebar' );
 
-if ( ! is_active_sidebar( 'sidebar-1' ) ) {
-	return;
-}
-?>
-
-<div class="col-md-4 widget-area" id="secondary" role="complementary">
-
-	<?php dynamic_sidebar( 'sidebar-1' ); ?>
-
-</div><!-- #secondary -->
+echo '<div class="sidebar" role="complementary">';
+	if ( is_active_sidebar( $sidebar ) ) {
+		dynamic_sidebar( $sidebar );
+	}
+echo '</div>';

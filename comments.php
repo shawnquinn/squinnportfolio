@@ -2,10 +2,8 @@
 /**
  * The template for displaying comments.
  *
- * The area of the page that contains both current comments
- * and the comment form.
- *
- * @package understrap
+ * @since   1.0.0
+ * @package Rolling
  */
 
 /*
@@ -17,86 +15,80 @@ if ( post_password_required() ) {
 	return;
 }
 ?>
-
-<div class="comments-area" id="comments">
-
-	<?php // You can start editing here -- including this comment! ?>
-
+<div id="comments" class="comments-area">
 	<?php if ( have_comments() ) : ?>
-		<h2 class="comments-title">
+		<h4 class="tu mg__0 mt__50 mb__30 fs__16 ls__2 fwb">
 			<?php
 				$comments_number = get_comments_number();
 				if ( 1 === $comments_number ) {
-					printf(
-						/* translators: %s: post title */
-						esc_html_x( 'One thought on &ldquo;%s&rdquo;', 'comments title', 'understrap' ),
-						'<span>' . get_the_title() . '</span>'
-					);
+					/* translators: %s: post title */
+					printf( _x( 'Comment (1)', 'comments title', 'rolling' ), get_the_title() );
 				} else {
-					printf( // WPCS: XSS OK.
+					printf(
 						/* translators: 1: number of comments, 2: post title */
-						esc_html( _nx(
-							'%1$s thought on &ldquo;%2$s&rdquo;',
-							'%1$s thoughts on &ldquo;%2$s&rdquo;',
+						_nx(
+							'Comment (%1$s)',
+							'Comments (%1$s)',
 							$comments_number,
 							'comments title',
-							'understrap'
-						) ),
+							'rolling'
+						),
 						number_format_i18n( $comments_number ),
-						'<span>' . get_the_title() . '</span>'
+						get_the_title()
 					);
 				}
 			?>
-		</h2><!-- .comments-title -->
+		</h4>
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through. ?>
-			<nav class="comment-navigation" id="comment-nav-above">
-				<h1 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'understrap' ); ?></h1>
-				<?php if ( get_previous_comments_link() ) { ?>
-					<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments',
-					'understrap' ) ); ?></div>
-				<?php }
-if ( get_next_comments_link() ) { ?>
-					<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;',
-					'understrap' ) ); ?></div>
-				<?php } ?>
-			</nav><!-- #comment-nav-above -->
-		<?php endif; // check for comment navigation. ?>
+		<?php the_comments_navigation(); ?>
 
-		<ol class="comment-list">
+		<ol class="commentlist">
 			<?php
-			wp_list_comments( array(
-				'style'      => 'ol',
-				'short_ping' => true,
-			) );
+				wp_list_comments( array(
+					'style'    => 'ol',
+					'callback' => 'rolling_comments_list',
+				) );
 			?>
 		</ol><!-- .comment-list -->
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // are there comments to navigate through. ?>
-			<nav class="comment-navigation" id="comment-nav-below">
-				<h1 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'understrap' ); ?></h1>
-				<?php if ( get_previous_comments_link() ) { ?>
-					<div class="nav-previous"><?php previous_comments_link( __( '&larr; Older Comments',
-					'understrap' ) ); ?></div>
-				<?php }
-if ( get_next_comments_link() ) { ?>
-					<div class="nav-next"><?php next_comments_link( __( 'Newer Comments &rarr;',
-					'understrap' ) ); ?></div>
-				<?php } ?>
-			</nav><!-- #comment-nav-below -->
-		<?php endif; // check for comment navigation. ?>
+		<?php the_comments_navigation(); ?>
 
-	<?php endif; // endif have_comments(). ?>
+	<?php endif; // Check for have_comments(). ?>
 
 	<?php
-	// If comments are closed and there are comments, let's leave a little note, shall we?
-	if ( ! comments_open() && '0' != get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
-		?>
-
-		<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'understrap' ); ?></p>
-
+		// If comments are closed and there are comments, let's leave a little note, shall we?
+		if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
+	?>
+		<p class="no-comments"><?php echo esc_html__( 'Comments are closed.', 'rolling' ); ?></p>
 	<?php endif; ?>
 
-	<?php comment_form(); // Render comments form. ?>
+	<?php
+		$args = array(
+			'comment_notes_before' => '',
+			// Redefine your own textarea (the comment body)
+			'comment_field' => '<div class="comment-form-comment mb__25"><textarea class="w__100" rows="8" placeholder="' . esc_html__( 'Your comment *', 'rolling' ) . '" name="comment" aria-required="true"></textarea></div>',
 
-</div><!-- #comments -->
+			'fields' => '
+				<div class="row margin-bottom-30">
+					<div class="comment-form-author col-md-4">
+						<input placeholder="' . esc_html__( 'Your name *', 'rolling' ) . '" type="text" required="required" size="30" value="" name="author" id="author" class="form-control">
+					</div>
+					<div class="comment-form-email col-md-4">
+						<input placeholder="' . esc_html__( 'Your email *', 'rolling' ) . '" type="email" required="required" size="30" value="" name="email" id="email" class="form-control">
+					</div>
+					<div class="comment-form-url col-md-4">
+						<input placeholder="' . esc_html__( 'Your website', 'rolling' ) . '" type="url" size="30" value="" name="url" id="url" class="form-control">
+					</div>
+				</div>
+			',
+
+			// Change the title of the reply section
+			'title_reply'=> esc_html__( 'Leave your comment', 'rolling' ),
+
+			// Change the title of send button 
+			'label_submit'=> esc_html__( 'Submit', 'rolling' ),
+		);
+
+		comment_form( $args );
+	?>
+</div><!-- .comments-area -->

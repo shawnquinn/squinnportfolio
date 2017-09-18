@@ -2,60 +2,30 @@
 /**
  * The template for displaying all pages.
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site will use a
- * different template.
- *
- * @package understrap
+ * @since   1.0.0
+ * @package Rolling
  */
-
-get_header();
-
-$container   = get_theme_mod( 'understrap_container_type' );
-$sidebar_pos = get_theme_mod( 'understrap_sidebar_position' );
-
-?>
-
-<div class="wrapper" id="page-wrapper">
-
-	<div class="<?php echo esc_attr( $container ); ?>" id="content" tabindex="-1">
-
-		<div class="row">
-
-			<!-- Do the left sidebar check -->
-			<?php get_template_part( 'global-templates/left-sidebar-check', 'none' ); ?>
-
-			<main class="site-main" id="main">
-
-				<?php while ( have_posts() ) : the_post(); ?>
-
-					<?php get_template_part( 'loop-templates/content', 'page' ); ?>
-
+get_header(); ?>
+<div role="main" class="main">
+	<div class="container">
+     	<div class="row">
+            <div class="col-sm-9">
+            	<div class="freebie-page uipasta-box-shadow">
+					<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+					<?php while ( have_posts() ) : the_post();
+						the_content();
+					endwhile; ?>
+            	</div>
+			</div>
+         	<div class="col-sm-3 sidebar">
+          		<div class="margin-solution"></div>
+          		<?php if ( is_active_sidebar( 'primary-sidebar' ) ) : ?>
 					<?php
-					// If comments are open or we have at least one comment, load up the comment template.
-					if ( comments_open() || get_comments_number() ) :
-						comments_template();
-					endif;
-					?>
-
-				<?php endwhile; // end of the loop. ?>
-
-			</main><!-- #main -->
-
-		</div><!-- #primary -->
-
-		<!-- Do the right sidebar check -->
-		<?php if ( 'right' === $sidebar_pos || 'both' === $sidebar_pos ) : ?>
-
-			<?php get_sidebar( 'right' ); ?>
-
-		<?php endif; ?>
-
-	</div><!-- .row -->
-
-</div><!-- Container end -->
-
-</div><!-- Wrapper end -->
-
-<?php get_footer(); ?>
+						if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('primary-sidebar') ) :
+					endif; ?>
+			    <?php endif; ?>
+          	</div>
+		</div>
+	</div>
+</div>
+<?php get_footer();
